@@ -77,3 +77,7 @@ if best_col and df[best_col].duplicated().sum() > len(df) * 0.3:
     structure_hints["repeated_measures_suspected"] = True
 
 print(structure_hints)
+
+print("\nConclusion:")
+print("Incorrect structure assumption leads to incorrect statistical inference.")
+print("Structure-aware detection can prevent this failure.")
