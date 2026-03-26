@@ -95,59 +95,6 @@ Shows that:
 
 ## Example Output
 
----
-
-## Key Features
-
-### 1. Structure Detection
-- Identifies grouping columns  
-- Detects repeated-measures patterns  
-- Avoids misclassifying continuous variables as subjects  
-
----
-
-### 2. Ambiguity Handling
-- Detects unclear or conflicting structure  
-- Prevents premature statistical decisions  
-- Suggests user clarification when needed  
-
----
-
-### 3. Decision Engine
-- Chooses appropriate statistical test:
-  - independent t-test  
-  - paired t-test  
-
----
-
-### 4. LLM-style Reasoning Layer
-- Generates human-readable explanations  
-- Explains *why* a test was selected  
-- Mimics agent-style decision making  
-
----
-
-## Demonstrations
-
-### Simulated Repeated Measures Data
-
-- Independent test → incorrect result  
-- Paired test → correct result  
-
-Shows that:
-> Failure occurs at the structure interpretation stage, not test computation.
-
----
-
-### Real Dataset (Iris)
-
-- Correctly identifies independent grouping (`target`)  
-- Selects appropriate independent test  
-- Avoids false repeated-measures detection  
-
----
-
-## Example Output
 --- Structure Detection ---
 {'group_column': 'target', 'repeated_measures': False, 'subject_column': None}
 
