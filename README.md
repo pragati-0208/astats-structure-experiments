@@ -1,105 +1,185 @@
 # Structure-Aware Statistical Inference (AStats Prototype)
 
 ## Overview
-This project explores how early-stage dataset understanding impacts statistical correctness in agentic workflows.
 
-A key challenge in automated statistical analysis is that incorrect assumptions about dataset structure (e.g., independence of samples) can lead to invalid conclusions **before test selection even occurs**.
+This project explores a key failure mode in automated statistical pipelines:
 
-This prototype demonstrates how incorporating **structure-aware reasoning** can improve statistical decision-making.
+> Incorrect statistical decisions often arise *before* test selection, due to misinterpretation of dataset structure.
+
+To address this, I built a **structure-aware statistical pipeline** that integrates:
+- data profiling
+- structure detection
+- ambiguity handling
+- decision logic
+- explainable reasoning
 
 ---
 
-## Problem
-Many statistical pipelines assume independence between samples.
+## Motivation
 
-However, real-world datasets often contain:
-- repeated measures  
-- grouping variables  
-- dependent observations  
+Many pipelines assume independence between samples by default.
 
-This can lead to:
+However, real-world datasets may contain:
+- repeated measures
+- grouped observations
+- hidden dependencies
+
+Failing to detect this leads to:
 - incorrect test selection  
 - misleading p-values  
 - invalid conclusions  
 
-A common example is **pseudoreplication**, where repeated observations are treated as independent samples.
+---
+
+## Pipeline Architecture
+Data
+→ Profiling
+→ Structure Detection
+→ Ambiguity Detection
+→ Decision Engine
+→ LLM-style Reasoning
+→ Statistical Test Execution
+
 
 ---
 
-## Experiments
+## Key Features
 
-### 1. Simulated Repeated-Measures Failure Case
-
-A synthetic dataset is used to demonstrate how incorrect assumptions affect results:
-
-- Independent t-test → **p ≈ 0.07 (incorrect conclusion)**  
-- Paired t-test → **p ≈ 0.0001 (correct conclusion)**  
-
-✔ Shows that the failure occurs at the **structure interpretation stage**
-
-✔ A simple heuristic detects:
-- subject-level grouping  
-- repeated-measures structure  
+### 1. Structure Detection
+- Identifies grouping columns  
+- Detects repeated-measures patterns  
+- Avoids misclassifying continuous variables as subjects  
 
 ---
 
-### 2. Real Dataset Experiment (Iris)
+### 2. Ambiguity Handling
+- Detects unclear or conflicting structure  
+- Prevents premature statistical decisions  
+- Suggests user clarification when needed  
 
-A real dataset is used to validate generalization:
+---
 
-- Detects grouping variable (`target`)  
-- Applies appropriate statistical test (independent t-test)  
-- Produces correct statistical interpretation  
+### 3. Decision Engine
+- Chooses appropriate statistical test:
+  - independent t-test  
+  - paired t-test  
 
-✔ Demonstrates that structure-aware reasoning works beyond synthetic data  
+---
+
+### 4. LLM-style Reasoning Layer
+- Generates human-readable explanations  
+- Explains *why* a test was selected  
+- Mimics agent-style decision making  
+
+---
+
+## Demonstrations
+
+### Simulated Repeated Measures Data
+
+- Independent test → incorrect result  
+- Paired test → correct result  
+
+Shows that:
+> Failure occurs at the structure interpretation stage, not test computation.
+
+---
+
+### Real Dataset (Iris)
+
+- Correctly identifies independent grouping (`target`)  
+- Selects appropriate independent test  
+- Avoids false repeated-measures detection  
+
+---
+
+## Example Output
+
+---
+
+## Key Features
+
+### 1. Structure Detection
+- Identifies grouping columns  
+- Detects repeated-measures patterns  
+- Avoids misclassifying continuous variables as subjects  
+
+---
+
+### 2. Ambiguity Handling
+- Detects unclear or conflicting structure  
+- Prevents premature statistical decisions  
+- Suggests user clarification when needed  
+
+---
+
+### 3. Decision Engine
+- Chooses appropriate statistical test:
+  - independent t-test  
+  - paired t-test  
+
+---
+
+### 4. LLM-style Reasoning Layer
+- Generates human-readable explanations  
+- Explains *why* a test was selected  
+- Mimics agent-style decision making  
+
+---
+
+## Demonstrations
+
+### Simulated Repeated Measures Data
+
+- Independent test → incorrect result  
+- Paired test → correct result  
+
+Shows that:
+> Failure occurs at the structure interpretation stage, not test computation.
+
+---
+
+### Real Dataset (Iris)
+
+- Correctly identifies independent grouping (`target`)  
+- Selects appropriate independent test  
+- Avoids false repeated-measures detection  
+
+---
+
+## Example Output
+--- Structure Detection ---
+{'group_column': 'target', 'repeated_measures': False, 'subject_column': None}
+
+--- Ambiguity Check ---
+{'is_ambiguous': False, 'reason': None}
+
+--- Selected Test ---
+independent_ttest
+
+--- LLM Reasoning ---
+No repeated structure detected → samples are treated as independent.
+Therefore, an independent test is appropriate.
+
 
 ---
 
 ## Key Insight
 
-Incorrect structure assumptions can fundamentally alter statistical conclusions.
-
-These errors occur:
-> **before statistical testing — during dataset understanding**
-
-A structure-aware layer can help detect:
-- grouping variables  
-- repeated-measures patterns  
-- dependency structures  
-
-and guide correct downstream analysis.
+> Statistical errors often originate from incorrect assumptions about data structure, not from the statistical tests themselves.
 
 ---
 
-## Approach
+## Future Work
 
-This prototype introduces a simple **structure-aware layer** that:
-
-- analyzes dataset columns  
-- detects potential grouping variables  
-- flags repeated-measures patterns  
-- provides hints for correct test selection  
-
----
-
-## Prototype Pipeline
-Data → Structure Detection → Statistical Test Selection → Result
-
-
----
-
-## Future Direction
-
-- Extend to full **data profiling + structure inference pipeline**  
-- Integrate with **agentic AI workflows (AStats)**  
-- Incorporate **LLM-based reasoning (Claude / Codex / open-weight models)**  
-- Support more complex statistical scenarios:
-  - regression  
-  - hierarchical models  
-  - longitudinal data  
+- richer statistical profiling (normality, variance, outliers)
+- integration with LLM-based reasoning (Codex / Claude / open-weight models)
+- interactive user-in-the-loop clarification
+- extension to more statistical tests and workflows
 
 ---
 
 ## Repository
 
-GitHub: https://github.com/pragati-0208/astats-structure-experiments
+Prototype implementation:
+https://github.com/pragati-0208/astats-structure-experiments
