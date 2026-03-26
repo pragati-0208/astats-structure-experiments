@@ -8,15 +8,15 @@ np.random.seed(42)
 subjects = np.repeat(np.arange(30), 2)  # same subject twice
 condition = np.tile(["before", "after"], 30)
 
-# same subjects → dependent data
 # strong subject-specific baseline
 subject_effect = np.repeat(np.random.normal(50, 5, 30), 2)
 
 # small treatment effect
 treatment_effect = np.where(condition == "after", 2, 0)
 
-# final score = subject variation + small treatment
+# final score
 scores = subject_effect + treatment_effect + np.random.normal(0, 2, 60)
+
 df = pd.DataFrame({
     "subject": subjects,
     "condition": condition,
@@ -43,24 +43,22 @@ t_stat_paired, p_val_paired = stats.ttest_rel(before_sorted, after_sorted)
 print("\n✅ Paired t-test (CORRECT):")
 print("p-value:", round(p_val_paired, 4))
 
-print("\n--- Structure Hint Detection ---")
 
+# --- Structure Hint Detection ---
 structure_hints = {
     "possible_group_column": None,
     "repeated_measures_suspected": False
 }
 
-# better grouping detection
 candidate_cols = []
 
 for col in df.columns:
     unique_ratio = df[col].nunique() / len(df)
 
-    # avoid columns with too few or too many unique values
     if 0.05 < unique_ratio <= 0.6:
         candidate_cols.append(col)
 
-# choose best candidate (highest repetition)
+# choose best grouping column
 best_col = None
 max_duplicates = 0
 
@@ -72,12 +70,23 @@ for col in candidate_cols:
 
 structure_hints["possible_group_column"] = best_col
 
-# repeated measures detection
+# detect repeated measures
 if best_col and df[best_col].duplicated().sum() > len(df) * 0.3:
     structure_hints["repeated_measures_suspected"] = True
 
+print("\n--- Structure Hint Detection ---")
 print(structure_hints)
 
+
+# --- Interpretation ---
+print("\nInterpretation:")
+if structure_hints["repeated_measures_suspected"]:
+    print("Detected repeated measures structure → paired test is appropriate.")
+else:
+    print("No repeated structure detected → independent tests may be appropriate.")
+
+
+# --- Conclusion ---
 print("\nConclusion:")
 print("Incorrect structure assumption leads to incorrect statistical inference.")
 print("Structure-aware detection can prevent this failure.")
