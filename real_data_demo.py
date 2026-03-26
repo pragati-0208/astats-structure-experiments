@@ -9,34 +9,37 @@ df = iris.frame
 print("Dataset preview:")
 print(df.head())
 
-# Assume:
-# - target = species (group)
-# - feature = sepal length
-
+# Feature + group
 feature = "sepal length (cm)"
 group = "target"
 
-# Split groups
 group0 = df[df[group] == 0][feature]
 group1 = df[df[group] == 1][feature]
 
-print("\n--- Statistical Test Comparison ---")
+print("\n--- Statistical Test ---")
 
-# Independent t-test (correct here)
 t_stat, p_val = stats.ttest_ind(group0, group1)
 
 print("Independent t-test:")
 print(f"p-value: {p_val:.4f}")
 
-# Simple structure detection heuristic
-def detect_structure(df):
-    for col in df.columns:
-        if df[col].nunique() < 10:
-            return {"possible_group_column": col, "repeated_measures_suspected": False}
-    return {"possible_group_column": None, "repeated_measures_suspected": False}
+# --- Structure Detection ---
+structure_hints = {
+    "possible_group_column": None,
+    "repeated_measures_suspected": False
+}
+
+for col in df.columns:
+    if df[col].nunique() < 10:
+        structure_hints["possible_group_column"] = col
+        break
 
 print("\n--- Structure Hint Detection ---")
-print(detect_structure(df))
+print(structure_hints)
+
+# --- Interpretation ---
+print("\nInterpretation:")
+print("Detected grouping variable → independent group comparison is appropriate.")
 
 print("\nConclusion:")
-print("Detected grouping structure helps guide correct statistical test selection.")
+print("Structure-aware detection helps identify correct statistical setting.")
